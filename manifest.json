@@ -1,14 +1,18 @@
 {
+  "id": "./",
   "name": "운동 타이머 - 휴식/인터벌/스톱워치",
   "short_name": "운동 타이머",
-  "description": "근력 운동 휴식 시간, 인터벌 운동, 스톱워치를 위한 심플한 타이머",
+  "description": "근력 운동 휴식 시간, 인터벌 운동, 스톱워치를 위한 심플한 타이머. 세트 사이 휴식을 재고, 고강도/중강도/저강도 인터벌을 자동으로 진행하며, 오프라인에서도 완전히 동작합니다.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait",
+  "dir": "ltr",
+  "lang": "ko",
   "background_color": "#121417",
   "theme_color": "#121417",
-  "lang": "ko",
+  "categories": ["health", "fitness", "sports", "lifestyle"],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -28,5 +32,38 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot-rest.png",
+      "sizes": "824x1830",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "휴식 타이머 화면"
+    },
+    {
+      "src": "icons/screenshot-interval.png",
+      "sizes": "824x1830",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "인터벌 타이머 화면"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "휴식 타이머",
+      "short_name": "휴식",
+      "description": "세트 사이 휴식 타이머를 바로 엽니다",
+      "url": "./index.html?mode=rest",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "인터벌 타이머",
+      "short_name": "인터벌",
+      "description": "인터벌 운동 타이머를 바로 엽니다",
+      "url": "./index.html?mode=interval",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }
