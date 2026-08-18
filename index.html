@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>운동 타이머</title>
+<meta name="theme-color" content="#121417">
+<meta name="description" content="근력 운동 휴식 타이머 · 인터벌 타이머 · 스톱워치">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <span class="brand-mark"></span>
+    <h1 class="brand">운동 타이머</h1>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="타이머 모드">
+    <button class="tab active" data-mode="rest" role="tab" aria-selected="true">휴식</button>
+    <button class="tab" data-mode="interval" role="tab" aria-selected="false">인터벌</button>
+    <button class="tab" data-mode="stopwatch" role="tab" aria-selected="false">스톱워치</button>
+  </nav>
+
+  <main>
+
+    <!-- ===================== REST VIEW ===================== -->
+    <section id="view-rest" class="view active">
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 320 320">
+          <circle class="ring-track" cx="160" cy="160" r="140"></circle>
+          <circle class="ring-progress rest-color" id="rest-ring" cx="160" cy="160" r="140"></circle>
+        </svg>
+        <div class="ring-center">
+          <span class="stage-pill" id="rest-status">쉬는 시간</span>
+          <span class="time-display" id="rest-time">01:30</span>
+          <span class="round-count" id="rest-rounds">완료한 세트 0회</span>
+        </div>
+      </div>
+
+      <div class="duration-setter" id="rest-setter">
+        <button class="stepper" data-target="rest" data-delta="-10">−10초</button>
+        <button class="stepper" data-target="rest" data-delta="-5">−5초</button>
+        <button class="stepper" data-target="rest" data-delta="5">+5초</button>
+        <button class="stepper" data-target="rest" data-delta="10">+10초</button>
+      </div>
+
+      <div class="presets" id="rest-presets">
+        <button class="chip" data-sec="30">30초</button>
+        <button class="chip" data-sec="60">1분</button>
+        <button class="chip" data-sec="90">1분 30초</button>
+        <button class="chip" data-sec="120">2분</button>
+        <button class="chip" data-sec="180">3분</button>
+      </div>
+
+      <div class="controls">
+        <button class="btn-pause" id="rest-pause" disabled>일시정지</button>
+        <button class="btn-primary" id="rest-main">시작</button>
+      </div>
+      <p class="hint">세트를 마치면 크게 눌러 휴식을 시작하세요. 시간이 끝나면 알림이 울리고, 다시 누르면 설정 시간으로 돌아갑니다.</p>
+    </section>
+
+    <!-- ===================== INTERVAL VIEW ===================== -->
+    <section id="view-interval" class="view">
+      <div class="ring-wrap">
+        <svg class="ring" viewBox="0 0 320 320">
+          <circle class="ring-track" cx="160" cy="160" r="140"></circle>
+          <circle class="ring-progress" id="interval-ring" cx="160" cy="160" r="140"></circle>
+        </svg>
+        <div class="ring-center">
+          <span class="stage-pill" id="interval-stage-label">대기 중</span>
+          <span class="time-display" id="interval-time">00:40</span>
+          <span class="round-count" id="interval-rounds">1라운드 · 1단계</span>
+        </div>
+      </div>
+
+      <div class="timeline" id="interval-timeline"></div>
+
+      <div class="controls">
+        <button class="btn-secondary" id="interval-reset">리셋</button>
+        <button class="btn-primary" id="interval-main">시작</button>
+        <button class="btn-secondary" id="interval-skip">다음</button>
+      </div>
+      <button class="btn-edit" id="interval-edit-open">단계 편집하기</button>
+    </section>
+
+    <!-- ===================== STOPWATCH VIEW ===================== -->
+    <section id="view-stopwatch" class="view">
+      <div class="sw-display-wrap">
+        <span class="time-display sw-display" id="sw-time">00:00<small>.00</small></span>
+      </div>
+      <div class="controls">
+        <button class="btn-secondary" id="sw-lap" disabled>랩</button>
+        <button class="btn-primary" id="sw-main">시작</button>
+        <button class="btn-secondary" id="sw-reset">리셋</button>
+      </div>
+      <ul class="lap-list" id="sw-laps"></ul>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== EDIT MODAL ===================== -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h2>인터벌 단계 설정</h2>
+
+    <div class="repeat-setter">
+      <span class="repeat-label">전체 반복 횟수</span>
+      <div class="stepper-row">
+        <button class="stepper-round" data-repeat-delta="-1">−</button>
+        <span id="repeat-count-label">3</span>
+        <button class="stepper-round" data-repeat-delta="1">+</button>
+      </div>
+    </div>
+
+    <ul class="stage-list" id="stage-list"></ul>
+
+    <button class="btn-add" id="stage-add">+ 단계 추가</button>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" id="edit-cancel">취소</button>
+      <button class="btn-primary" id="edit-save">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- stage row template -->
+<template id="stage-row-template">
+  <li class="stage-row">
+    <span class="stage-color-dot"></span>
+    <div class="stage-fields">
+      <div class="stage-field-row">
+        <select class="stage-intensity">
+          <option value="high">고강도</option>
+          <option value="mid">중강도</option>
+          <option value="low">저강도</option>
+        </select>
+        <input type="text" class="stage-label" maxlength="10" placeholder="단계 이름">
+      </div>
+      <div class="stage-field-row">
+        <button class="mini-stepper" data-mini-delta="-10">−10</button>
+        <button class="mini-stepper" data-mini-delta="-5">−5</button>
+        <span class="stage-duration-label">00:40</span>
+        <button class="mini-stepper" data-mini-delta="5">+5</button>
+        <button class="mini-stepper" data-mini-delta="10">+10</button>
+      </div>
+    </div>
+    <div class="stage-row-actions">
+      <button class="icon-btn move-up" aria-label="위로">▲</button>
+      <button class="icon-btn move-down" aria-label="아래로">▼</button>
+      <button class="icon-btn delete-stage" aria-label="삭제">✕</button>
+    </div>
+  </li>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>
