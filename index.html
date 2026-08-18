@@ -25,6 +25,7 @@
     <button class="tab active" data-mode="rest" role="tab" aria-selected="true">휴식</button>
     <button class="tab" data-mode="interval" role="tab" aria-selected="false">인터벌</button>
     <button class="tab" data-mode="stopwatch" role="tab" aria-selected="false">스톱워치</button>
+    <button class="tab" data-mode="routine" role="tab" aria-selected="false">루틴</button>
   </nav>
 
   <main>
@@ -102,8 +103,121 @@
       <ul class="lap-list" id="sw-laps"></ul>
     </section>
 
+    <!-- ===================== ROUTINE VIEW ===================== -->
+    <section id="view-routine" class="view">
+
+      <!-- ---- setup ---- -->
+      <div id="routine-setup">
+        <p class="hint" style="margin-top:0;">오늘 할 운동을 순서대로 등록하세요. 세트 수와 휴식 시간은 언제든 바꿀 수 있어요.</p>
+        <ul class="exercise-list" id="routine-exercise-list"></ul>
+        <button class="btn-add" id="routine-exercise-add">+ 운동 추가</button>
+        <div class="controls" style="margin-top:18px;">
+          <button class="btn-primary" id="routine-start-btn">운동 시작</button>
+        </div>
+      </div>
+
+      <!-- ---- active session ---- -->
+      <div id="routine-active" class="hidden">
+        <div class="elapsed-bar">⏱ 총 운동 시간 <span id="routine-elapsed">00:00</span></div>
+
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 320 320">
+            <circle class="ring-track" cx="160" cy="160" r="140"></circle>
+            <circle class="ring-progress routine-color" id="routine-ring" cx="160" cy="160" r="140"></circle>
+          </svg>
+          <div class="ring-center">
+            <span class="stage-pill" id="routine-status">세트 준비</span>
+            <span class="time-display" id="routine-time">01:30</span>
+            <span class="round-count" id="routine-progress-label">운동 · 0/4세트</span>
+          </div>
+        </div>
+
+        <div class="duration-setter" id="routine-rest-setter">
+          <button class="stepper" data-routine-delta="-10">−10초</button>
+          <button class="stepper" data-routine-delta="-5">−5초</button>
+          <button class="stepper" data-routine-delta="5">+5초</button>
+          <button class="stepper" data-routine-delta="10">+10초</button>
+        </div>
+
+        <div class="controls">
+          <button class="btn-secondary" id="routine-reset-sets">세트 리셋</button>
+          <button class="btn-primary" id="routine-main">세트 완료</button>
+        </div>
+
+        <div class="routine-footer-actions">
+          <button class="btn-edit" id="routine-finish-exercise">다음 운동으로</button>
+          <button class="btn-quit" id="routine-quit">전체 종료</button>
+        </div>
+      </div>
+
+      <!-- ---- summary ---- -->
+      <div id="routine-summary" class="hidden">
+        <h2 class="summary-title">오늘의 운동 완료 🎉</h2>
+        <div class="summary-total" id="routine-total-time">총 운동 시간 00:00</div>
+        <ul class="summary-list" id="routine-summary-list"></ul>
+        <div class="controls" style="margin-top:8px;">
+          <button class="btn-primary" id="routine-restart">새 운동 시작</button>
+        </div>
+      </div>
+
+    </section>
+
   </main>
 </div>
+
+<!-- next-exercise transition modal -->
+<div class="modal-overlay" id="next-exercise-modal">
+  <div class="modal">
+    <h2 id="next-exercise-title">다음 운동</h2>
+    <div class="repeat-setter">
+      <span class="repeat-label">목표 세트 수</span>
+      <div class="stepper-row">
+        <button class="stepper-round" data-nsets-delta="-1">−</button>
+        <span id="next-exercise-sets-label">4</span>
+        <button class="stepper-round" data-nsets-delta="1">+</button>
+      </div>
+    </div>
+    <div class="repeat-setter">
+      <span class="repeat-label">휴식 시간</span>
+      <div class="stepper-row">
+        <button class="stepper-round" data-nrest-delta="-10">−10</button>
+        <button class="stepper-round" data-nrest-delta="-5">−5</button>
+        <span id="next-exercise-rest-label">01:30</span>
+        <button class="stepper-round" data-nrest-delta="5">+5</button>
+        <button class="stepper-round" data-nrest-delta="10">+10</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="next-exercise-confirm" style="flex:1;">이 운동 시작</button>
+    </div>
+  </div>
+</div>
+
+<!-- exercise row template (setup screen) -->
+<template id="routine-exercise-row-template">
+  <li class="exercise-row">
+    <input type="text" class="exercise-name" maxlength="16" placeholder="운동 이름 (예: 벤치프레스)">
+    <div class="exercise-field-row">
+      <span class="exercise-field-label">세트</span>
+      <button class="mini-stepper" data-sets-delta="-1">−</button>
+      <span class="exercise-sets-label">4</span>
+      <button class="mini-stepper" data-sets-delta="1">+</button>
+    </div>
+    <div class="exercise-field-row">
+      <span class="exercise-field-label">휴식</span>
+      <button class="mini-stepper" data-rest-delta="-10">−10</button>
+      <button class="mini-stepper" data-rest-delta="-5">−5</button>
+      <span class="exercise-rest-label">01:30</span>
+      <button class="mini-stepper" data-rest-delta="5">+5</button>
+      <button class="mini-stepper" data-rest-delta="10">+10</button>
+    </div>
+    <div class="exercise-row-actions">
+      <button class="icon-btn move-up" aria-label="위로">▲</button>
+      <button class="icon-btn move-down" aria-label="아래로">▼</button>
+      <button class="icon-btn delete-exercise" aria-label="삭제">✕</button>
+    </div>
+  </li>
+</template>
 
 <!-- ===================== EDIT MODAL ===================== -->
 <div class="modal-overlay" id="edit-modal">

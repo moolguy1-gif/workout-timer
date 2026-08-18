@@ -6,13 +6,21 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "orientation": "portrait",
   "dir": "ltr",
   "lang": "ko",
   "background_color": "#121417",
   "theme_color": "#121417",
-  "categories": ["health", "fitness", "sports", "lifestyle"],
+  "categories": [
+    "health",
+    "fitness",
+    "sports",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -55,15 +63,36 @@
       "short_name": "휴식",
       "description": "세트 사이 휴식 타이머를 바로 엽니다",
       "url": "./index.html?mode=rest",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "인터벌 타이머",
       "short_name": "인터벌",
       "description": "인터벌 운동 타이머를 바로 엽니다",
       "url": "./index.html?mode=interval",
-      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
+  "handle_links": "preferred",
+  "related_applications": [],
+  "edge_side_panel": {
+    "preferred_width": 420
+  }
 }
